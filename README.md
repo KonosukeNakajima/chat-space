@@ -2,7 +2,7 @@
 <<<<<<< HEAD
 |Column|Type|Options|
 |------|----|-------|
-|text|text|null: false|
+|text|string|null: false|
 |user_id|reference|null: false, foreign_key: true|
 |group_id|reference|null: false, foreign_key: true|
 
@@ -18,9 +18,9 @@
 |email|string|null: false|
 
 ###Association
-- has_many :groups, through :group-users
+- has_many :groups, through :group_users
 - has_many :messages
-- has_many :group-users
+- has_many :group_users
 
 
 ## groupsテーブル
@@ -29,12 +29,12 @@
 |name|string|null: false|
 
 ### Association
-- has_many :users, through :group-users
+- has_many :users, through :group_users
 - has_many :messages
-- has_many :group-users
+- has_many :group_users
 
 
-## group-usersテーブル
+## group_usersテーブル
 |Column|Type|Options|
 |------|----|-------|
 |user_id|reference|null: false, foreign_key: true|
@@ -43,17 +43,3 @@
 ### Association
 - belongs_to :group
 - belongs_to :user
-=======
-
-|Column|Type|Options|
-|------|----|-------|
-|user_id|integer|null: false, foreign_key: true|
-|group_id|integer|null: false, foreign_key: true|
-|body|text|
-|image|string|
-
-
-### Association
-- has_many :users
-^ has_many :tweets
->>>>>>> origin/edit-readme-to-review
