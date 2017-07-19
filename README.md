@@ -1,8 +1,8 @@
 ## messagesテーブル
-<<<<<<< HEAD
 |Column|Type|Options|
 |------|----|-------|
-|text|string|null: false|
+|text|string|
+|image|string|
 |user_id|reference|null: false, foreign_key: true|
 |group_id|reference|null: false, foreign_key: true|
 
