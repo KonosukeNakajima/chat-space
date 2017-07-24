@@ -41,6 +41,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'erb2haml'
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'
@@ -53,4 +54,3 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'haml-rails'
-gem 'erb2haml'
