@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GiftBox - ギフトを届けよう</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="header-inner">
+      <h1 class="logo" onclick="app.showPage('catalog')">
+        <span class="logo-icon">&#127873;</span> GiftBox
+      </h1>
+      <nav class="nav">
+        <button class="nav-btn active" data-page="catalog">ギフト一覧</button>
+        <button class="nav-btn" data-page="cart">
+          カート <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+        <button class="nav-btn" data-page="history">送信履歴</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="main">
+
+    <!-- カタログページ -->
+    <section id="page-catalog" class="page active">
+      <div class="catalog-header">
+        <h2>ギフトカタログ</h2>
+        <p class="subtitle">大切な人に、特別な贈り物を。</p>
+      </div>
+
+      <!-- カテゴリフィルター -->
+      <div class="category-filter">
+        <button class="category-btn active" data-category="all">すべて</button>
+        <button class="category-btn" data-category="sweets">スイーツ</button>
+        <button class="category-btn" data-category="drink">ドリンク</button>
+        <button class="category-btn" data-category="goods">雑貨</button>
+        <button class="category-btn" data-category="experience">体験</button>
+        <button class="category-btn" data-category="fashion">ファッション</button>
+      </div>
+
+      <!-- ギフト一覧 -->
+      <div class="gift-grid" id="gift-grid">
+        <!-- JSで動的に生成 -->
+      </div>
+    </section>
+
+    <!-- ギフト詳細モーダル -->
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal" id="gift-modal">
+        <button class="modal-close" onclick="app.closeModal()">&times;</button>
+        <div class="modal-body">
+          <div class="modal-image" id="modal-image"></div>
+          <div class="modal-info">
+            <span class="modal-category" id="modal-category"></span>
+            <h2 id="modal-name"></h2>
+            <p class="modal-description" id="modal-description"></p>
+            <p class="modal-price" id="modal-price"></p>
+            <button class="btn btn-primary btn-lg" id="modal-add-btn" onclick="app.addToCartFromModal()">
+              カートに追加
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- カートページ -->
+    <section id="page-cart" class="page">
+      <h2>カート</h2>
+
+      <div class="cart-container">
+        <div class="cart-items" id="cart-items">
+          <!-- JSで動的に生成 -->
+        </div>
+
+        <div class="cart-empty" id="cart-empty">
+          <p>カートは空です</p>
+          <button class="btn btn-secondary" onclick="app.showPage('catalog')">ギフトを探す</button>
+        </div>
+
+        <div class="cart-summary" id="cart-summary">
+          <div class="cart-total">
+            <span>合計</span>
+            <span id="cart-total-price">¥0</span>
+          </div>
+
+          <!-- 送り先フォーム -->
+          <div class="send-form">
+            <h3>ギフトを贈る</h3>
+            <div class="form-group">
+              <label for="recipient-name">お相手の名前</label>
+              <input type="text" id="recipient-name" placeholder="例：田中太郎">
+            </div>
+            <div class="form-group">
+              <label for="gift-message">メッセージ</label>
+              <textarea id="gift-message" rows="4" placeholder="心を込めたメッセージを添えましょう..."></textarea>
+            </div>
+            <button class="btn btn-primary btn-lg btn-full" onclick="app.sendGift()">
+              ギフトを送る
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 送信完了ページ -->
+    <section id="page-sent" class="page">
+      <div class="sent-container">
+        <div class="sent-animation">
+          <span class="sent-icon">&#127873;</span>
+        </div>
+        <h2>ギフトを送りました！</h2>
+        <p class="sent-recipient" id="sent-recipient"></p>
+        <p class="sent-message-preview" id="sent-message-preview"></p>
+        <div class="sent-actions">
+          <button class="btn btn-primary" onclick="app.showPage('catalog')">もっとギフトを探す</button>
+          <button class="btn btn-secondary" onclick="app.showPage('history')">送信履歴を見る</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 送信履歴ページ -->
+    <section id="page-history" class="page">
+      <h2>送信履歴</h2>
+
+      <div class="history-list" id="history-list">
+        <!-- JSで動的に生成 -->
+      </div>
+
+      <div class="history-empty" id="history-empty">
+        <p>まだギフトを送っていません</p>
+        <button class="btn btn-secondary" onclick="app.showPage('catalog')">ギフトを探す</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="footer">
+    <p>&copy; 2026 GiftBox - 大切な人にギフトを届けよう</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
