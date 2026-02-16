@@ -5,10 +5,25 @@ const app = {
   currentCategory: 'all',
   currentGiftId: null,
 
+  // おすすめギフトID（手動セレクション）
+  recommendedIds: [1, 5, 9, 13, 17, 7],
+  // 人気ランキングID
+  rankingIds: [13, 1, 10, 6, 17],
+
+  // シーン別マッピング
+  sceneMap: {
+    birthday: [1, 2, 6, 13, 17],
+    thankyou: [4, 7, 9, 10, 12],
+    celebration: [5, 6, 13, 16, 18],
+    relax: [9, 12, 13, 3, 7],
+    season: [2, 3, 7, 8, 19],
+    luxury: [13, 16, 17, 18, 15]
+  },
+
   // 初期化
   init() {
     this.loadFromStorage();
-    this.renderGifts();
+    this.renderHome();
     this.renderHistory();
     this.updateCartBadge();
     this.setupEventListeners();
@@ -36,37 +51,73 @@ const app = {
       if (e.target === e.currentTarget) this.closeModal();
     });
 
+    document.getElementById('video-modal-overlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) this.closeVideoModal();
+    });
+
     // ESCキーでモーダルを閉じる
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') this.closeModal();
+      if (e.key === 'Escape') {
+        this.closeModal();
+        this.closeVideoModal();
+      }
     });
   },
 
-  // ===== ページ切り替え =====
-  showPage(pageName) {
-    // ページの表示切り替え
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const page = document.getElementById(`page-${pageName}`);
-    if (page) page.classList.add('active');
-
-    // ナビのアクティブ状態
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.page === pageName);
-    });
-
-    // カートページの表示更新
-    if (pageName === 'cart') this.renderCart();
-    if (pageName === 'history') this.renderHistory();
+  // ===== ホームページ描画 =====
+  renderHome() {
+    this.renderRecommended();
+    this.renderRanking();
+    this.renderNewGifts();
   },
 
-  // ===== ギフト一覧描画 =====
-  renderGifts() {
-    const grid = document.getElementById('gift-grid');
-    const filtered = this.currentCategory === 'all'
-      ? GIFTS
-      : GIFTS.filter(g => g.category === this.currentCategory);
+  // おすすめギフト
+  renderRecommended() {
+    const container = document.getElementById('recommended-gifts');
+    const gifts = this.recommendedIds
+      .map(id => GIFTS.find(g => g.id === id))
+      .filter(Boolean);
 
-    grid.innerHTML = filtered.map(gift => `
+    container.innerHTML = gifts.map(gift => `
+      <div class="gift-scroll-card" onclick="app.openModal(${gift.id})">
+        <div class="gift-scroll-card-image">${gift.emoji}</div>
+        <div class="gift-scroll-card-body">
+          <div class="gift-scroll-card-name">${gift.name}</div>
+          <div class="gift-scroll-card-price">&yen;${gift.price.toLocaleString()}</div>
+        </div>
+      </div>
+    `).join('');
+  },
+
+  // 人気ランキング
+  renderRanking() {
+    const container = document.getElementById('ranking-gifts');
+    const gifts = this.rankingIds
+      .map(id => GIFTS.find(g => g.id === id))
+      .filter(Boolean);
+
+    container.innerHTML = gifts.map((gift, index) => {
+      const rankClass = index < 3 ? `rank-${index + 1}` : 'rank-other';
+      return `
+        <div class="ranking-item" onclick="app.openModal(${gift.id})">
+          <div class="ranking-badge ${rankClass}">${index + 1}</div>
+          <span class="ranking-emoji">${gift.emoji}</span>
+          <div class="ranking-info">
+            <div class="ranking-name">${gift.name}</div>
+            <div class="ranking-category">${gift.categoryLabel}</div>
+          </div>
+          <div class="ranking-price">&yen;${gift.price.toLocaleString()}</div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  // 新着ギフト（最後の6つ）
+  renderNewGifts() {
+    const container = document.getElementById('new-gifts');
+    const gifts = GIFTS.slice(-6).reverse();
+
+    container.innerHTML = gifts.map(gift => `
       <div class="gift-card" onclick="app.openModal(${gift.id})">
         <div class="gift-card-image">${gift.emoji}</div>
         <div class="gift-card-body">
@@ -82,6 +133,116 @@ const app = {
         </div>
       </div>
     `).join('');
+  },
+
+  // ===== ページ切り替え =====
+  showPage(pageName) {
+    // ページの表示切り替え
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const page = document.getElementById(`page-${pageName}`);
+    if (page) page.classList.add('active');
+
+    // ナビのアクティブ状態
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.page === pageName);
+    });
+
+    // ページ別処理
+    if (pageName === 'cart') this.renderCart();
+    if (pageName === 'history') this.renderHistory();
+    if (pageName === 'categories') this.showCategoryList();
+
+    // スクロールトップ
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  // ===== カテゴリ選択 =====
+  showCategoryList() {
+    const richCats = document.getElementById('rich-categories');
+    const filter = document.getElementById('category-filter');
+    const grid = document.getElementById('gift-grid');
+    const backBtn = document.getElementById('back-to-categories');
+
+    richCats.style.display = 'grid';
+    filter.style.display = 'none';
+    grid.style.display = 'none';
+    backBtn.style.display = 'none';
+  },
+
+  selectCategory(category) {
+    this.currentCategory = category;
+    const richCats = document.getElementById('rich-categories');
+    const filter = document.getElementById('category-filter');
+    const grid = document.getElementById('gift-grid');
+    const backBtn = document.getElementById('back-to-categories');
+
+    richCats.style.display = 'none';
+    filter.style.display = 'flex';
+    grid.style.display = 'grid';
+    backBtn.style.display = 'block';
+
+    // フィルターのアクティブ状態を更新
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.category === category);
+    });
+
+    this.renderGifts();
+  },
+
+  // ホームのクイックカテゴリからカテゴリページへ飛ぶ
+  filterAndShowCategory(category) {
+    this.showPage('categories');
+    // 少し遅延させてページ表示後にカテゴリ選択
+    setTimeout(() => this.selectCategory(category), 50);
+  },
+
+  // シーン別フィルター
+  filterByScene(scene) {
+    const ids = this.sceneMap[scene] || [];
+    this.showPage('categories');
+    setTimeout(() => {
+      const richCats = document.getElementById('rich-categories');
+      const filter = document.getElementById('category-filter');
+      const grid = document.getElementById('gift-grid');
+      const backBtn = document.getElementById('back-to-categories');
+
+      richCats.style.display = 'none';
+      filter.style.display = 'none';
+      grid.style.display = 'grid';
+      backBtn.style.display = 'block';
+
+      const gifts = ids.map(id => GIFTS.find(g => g.id === id)).filter(Boolean);
+      grid.innerHTML = gifts.map(gift => this.renderGiftCard(gift)).join('');
+    }, 50);
+  },
+
+  // ===== ギフト一覧描画 =====
+  renderGifts() {
+    const grid = document.getElementById('gift-grid');
+    const filtered = this.currentCategory === 'all'
+      ? GIFTS
+      : GIFTS.filter(g => g.category === this.currentCategory);
+
+    grid.innerHTML = filtered.map(gift => this.renderGiftCard(gift)).join('');
+  },
+
+  renderGiftCard(gift) {
+    return `
+      <div class="gift-card" onclick="app.openModal(${gift.id})">
+        <div class="gift-card-image">${gift.emoji}</div>
+        <div class="gift-card-body">
+          <div class="gift-card-category">${gift.categoryLabel}</div>
+          <h3 class="gift-card-name">${gift.name}</h3>
+          <p class="gift-card-description">${gift.description}</p>
+          <div class="gift-card-footer">
+            <span class="gift-card-price">&yen;${gift.price.toLocaleString()}</span>
+            <button class="btn-add-cart" onclick="event.stopPropagation(); app.addToCart(${gift.id}, this)">
+              追加
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
   },
 
   // ===== カテゴリフィルター =====
@@ -128,6 +289,17 @@ const app = {
       const addBtn = document.getElementById('modal-add-btn');
       addBtn.textContent = 'カートに追加済み';
     }
+  },
+
+  // ===== 動画モーダル =====
+  playVideo(cardEl) {
+    document.getElementById('video-modal-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeVideoModal() {
+    document.getElementById('video-modal-overlay').classList.remove('active');
+    document.body.style.overflow = '';
   },
 
   // ===== カート機能 =====

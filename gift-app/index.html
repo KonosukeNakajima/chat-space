@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GiftBox - ギフトを届けよう</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- ヘッダー -->
@@ -14,11 +17,23 @@
         <span class="logo-icon">&#127873;</span> GiftBox
       </h1>
       <nav class="nav">
-        <button class="nav-btn active" data-page="catalog">ギフト一覧</button>
-        <button class="nav-btn" data-page="cart">
-          カート <span class="cart-badge" id="cart-badge">0</span>
+        <button class="nav-btn active" data-page="catalog">
+          <span class="nav-icon">&#127968;</span>
+          <span class="nav-label">ホーム</span>
         </button>
-        <button class="nav-btn" data-page="history">送信履歴</button>
+        <button class="nav-btn" data-page="categories">
+          <span class="nav-icon">&#128269;</span>
+          <span class="nav-label">カテゴリ</span>
+        </button>
+        <button class="nav-btn" data-page="cart">
+          <span class="nav-icon">&#128722;</span>
+          <span class="nav-label">カート</span>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+        <button class="nav-btn" data-page="history">
+          <span class="nav-icon">&#128230;</span>
+          <span class="nav-label">履歴</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -26,26 +41,286 @@
   <!-- メインコンテンツ -->
   <main class="main">
 
-    <!-- カタログページ -->
+    <!-- ===== ホーム（カタログ）ページ ===== -->
     <section id="page-catalog" class="page active">
-      <div class="catalog-header">
-        <h2>ギフトカタログ</h2>
-        <p class="subtitle">大切な人に、特別な贈り物を。</p>
+
+      <!-- ヒーローバナー -->
+      <div class="hero-banner">
+        <div class="hero-content">
+          <span class="hero-badge">&#127873; NEW</span>
+          <h2 class="hero-title">大切な人に、<br>特別な贈り物を。</h2>
+          <p class="hero-subtitle">あなたの気持ちをギフトに込めて届けよう</p>
+          <button class="btn btn-hero" onclick="app.showPage('categories')">ギフトを探す</button>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-emoji-grid">
+            <span class="hero-emoji he-1">&#127873;</span>
+            <span class="hero-emoji he-2">&#127846;</span>
+            <span class="hero-emoji he-3">&#9749;</span>
+            <span class="hero-emoji he-4">&#128144;</span>
+            <span class="hero-emoji he-5">&#127881;</span>
+            <span class="hero-emoji he-6">&#128142;</span>
+          </div>
+        </div>
       </div>
 
-      <!-- カテゴリフィルター -->
-      <div class="category-filter">
+      <!-- クイックカテゴリ（丸アイコン） -->
+      <div class="section-block">
+        <div class="quick-categories">
+          <div class="quick-cat-item" onclick="app.filterAndShowCategory('sweets')">
+            <div class="quick-cat-icon">&#127851;</div>
+            <span class="quick-cat-label">スイーツ</span>
+          </div>
+          <div class="quick-cat-item" onclick="app.filterAndShowCategory('drink')">
+            <div class="quick-cat-icon">&#9749;</div>
+            <span class="quick-cat-label">ドリンク</span>
+          </div>
+          <div class="quick-cat-item" onclick="app.filterAndShowCategory('goods')">
+            <div class="quick-cat-icon">&#128367;&#65039;</div>
+            <span class="quick-cat-label">雑貨</span>
+          </div>
+          <div class="quick-cat-item" onclick="app.filterAndShowCategory('experience')">
+            <div class="quick-cat-icon">&#10024;</div>
+            <span class="quick-cat-label">体験</span>
+          </div>
+          <div class="quick-cat-item" onclick="app.filterAndShowCategory('fashion')">
+            <div class="quick-cat-icon">&#128091;</div>
+            <span class="quick-cat-label">ファッション</span>
+          </div>
+          <div class="quick-cat-item" onclick="app.showPage('categories')">
+            <div class="quick-cat-icon">&#128270;</div>
+            <span class="quick-cat-label">すべて見る</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- おすすめギフト -->
+      <div class="section-block">
+        <div class="section-header">
+          <h3 class="section-title"><span class="section-icon">&#11088;</span> おすすめギフト</h3>
+          <button class="section-more" onclick="app.showPage('categories')">すべて見る &rsaquo;</button>
+        </div>
+        <div class="gift-scroll" id="recommended-gifts">
+          <!-- JSで動的に生成 -->
+        </div>
+      </div>
+
+      <!-- ショート動画セクション -->
+      <div class="section-block">
+        <div class="section-header">
+          <h3 class="section-title"><span class="section-icon">&#127916;</span> ギフト動画</h3>
+        </div>
+        <div class="video-scroll" id="video-section">
+          <div class="video-card" onclick="app.playVideo(this)">
+            <div class="video-thumbnail vt-1">
+              <div class="video-play-btn">&#9654;</div>
+              <div class="video-duration">0:30</div>
+            </div>
+            <p class="video-title">開封の瞬間！<br>チョコレートギフト</p>
+          </div>
+          <div class="video-card" onclick="app.playVideo(this)">
+            <div class="video-thumbnail vt-2">
+              <div class="video-play-btn">&#9654;</div>
+              <div class="video-duration">0:45</div>
+            </div>
+            <p class="video-title">感動のサプライズ<br>体験ギフト</p>
+          </div>
+          <div class="video-card" onclick="app.playVideo(this)">
+            <div class="video-thumbnail vt-3">
+              <div class="video-play-btn">&#9654;</div>
+              <div class="video-duration">0:22</div>
+            </div>
+            <p class="video-title">職人の手作り<br>陶器マグカップ</p>
+          </div>
+          <div class="video-card" onclick="app.playVideo(this)">
+            <div class="video-thumbnail vt-4">
+              <div class="video-play-btn">&#9654;</div>
+              <div class="video-duration">0:38</div>
+            </div>
+            <p class="video-title">最高級カシミア<br>ストール紹介</p>
+          </div>
+          <div class="video-card" onclick="app.playVideo(this)">
+            <div class="video-thumbnail vt-5">
+              <div class="video-play-btn">&#9654;</div>
+              <div class="video-duration">0:55</div>
+            </div>
+            <p class="video-title">ラッピング<br>テクニック集</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 人気ランキング -->
+      <div class="section-block">
+        <div class="section-header">
+          <h3 class="section-title"><span class="section-icon">&#128293;</span> 人気ランキング</h3>
+          <button class="section-more" onclick="app.showPage('categories')">すべて見る &rsaquo;</button>
+        </div>
+        <div class="ranking-list" id="ranking-gifts">
+          <!-- JSで動的に生成 -->
+        </div>
+      </div>
+
+      <!-- ギフトシーン別 -->
+      <div class="section-block">
+        <div class="section-header">
+          <h3 class="section-title"><span class="section-icon">&#127872;</span> シーンで選ぶ</h3>
+        </div>
+        <div class="scene-grid" id="scene-section">
+          <div class="scene-card" onclick="app.filterByScene('birthday')">
+            <div class="scene-card-bg scene-birthday"></div>
+            <div class="scene-card-content">
+              <span class="scene-emoji">&#127874;</span>
+              <h4>誕生日</h4>
+              <p>特別な日を祝おう</p>
+            </div>
+          </div>
+          <div class="scene-card" onclick="app.filterByScene('thankyou')">
+            <div class="scene-card-bg scene-thankyou"></div>
+            <div class="scene-card-content">
+              <span class="scene-emoji">&#128144;</span>
+              <h4>ありがとう</h4>
+              <p>感謝の気持ちを込めて</p>
+            </div>
+          </div>
+          <div class="scene-card" onclick="app.filterByScene('celebration')">
+            <div class="scene-card-bg scene-celebration"></div>
+            <div class="scene-card-content">
+              <span class="scene-emoji">&#127881;</span>
+              <h4>お祝い</h4>
+              <p>門出を祝う贈り物</p>
+            </div>
+          </div>
+          <div class="scene-card" onclick="app.filterByScene('relax')">
+            <div class="scene-card-bg scene-relax"></div>
+            <div class="scene-card-content">
+              <span class="scene-emoji">&#128524;</span>
+              <h4>癒し・リラックス</h4>
+              <p>ゆったり過ごす時間を</p>
+            </div>
+          </div>
+          <div class="scene-card" onclick="app.filterByScene('season')">
+            <div class="scene-card-bg scene-season"></div>
+            <div class="scene-card-content">
+              <span class="scene-emoji">&#127800;</span>
+              <h4>季節の贈り物</h4>
+              <p>季節を感じるギフト</p>
+            </div>
+          </div>
+          <div class="scene-card" onclick="app.filterByScene('luxury')">
+            <div class="scene-card-bg scene-luxury"></div>
+            <div class="scene-card-content">
+              <span class="scene-emoji">&#128142;</span>
+              <h4>プレミアム</h4>
+              <p>特別な方への贅沢ギフト</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 新着ギフト -->
+      <div class="section-block">
+        <div class="section-header">
+          <h3 class="section-title"><span class="section-icon">&#127381;</span> 新着ギフト</h3>
+          <button class="section-more" onclick="app.showPage('categories')">すべて見る &rsaquo;</button>
+        </div>
+        <div class="gift-grid-home" id="new-gifts">
+          <!-- JSで動的に生成 -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== カテゴリページ ===== -->
+    <section id="page-categories" class="page">
+      <div class="catalog-header">
+        <h2>カテゴリから探す</h2>
+        <p class="subtitle">ぴったりのギフトを見つけよう</p>
+      </div>
+
+      <!-- リッチカテゴリカード -->
+      <div class="rich-category-grid" id="rich-categories">
+        <div class="rich-cat-card" data-category="all" onclick="app.selectCategory('all')">
+          <div class="rich-cat-icon-wrap rci-all">
+            <span>&#127873;</span>
+          </div>
+          <div class="rich-cat-info">
+            <h4>すべて</h4>
+            <p>全商品を見る</p>
+          </div>
+          <span class="rich-cat-count" id="count-all">20</span>
+        </div>
+        <div class="rich-cat-card" data-category="sweets" onclick="app.selectCategory('sweets')">
+          <div class="rich-cat-icon-wrap rci-sweets">
+            <span>&#127851;</span>
+          </div>
+          <div class="rich-cat-info">
+            <h4>スイーツ</h4>
+            <p>甘い幸せを届ける</p>
+          </div>
+          <span class="rich-cat-count" id="count-sweets">4</span>
+        </div>
+        <div class="rich-cat-card" data-category="drink" onclick="app.selectCategory('drink')">
+          <div class="rich-cat-icon-wrap rci-drink">
+            <span>&#9749;</span>
+          </div>
+          <div class="rich-cat-info">
+            <h4>ドリンク</h4>
+            <p>特別な一杯を贈る</p>
+          </div>
+          <span class="rich-cat-count" id="count-drink">4</span>
+        </div>
+        <div class="rich-cat-card" data-category="goods" onclick="app.selectCategory('goods')">
+          <div class="rich-cat-icon-wrap rci-goods">
+            <span>&#128367;&#65039;</span>
+          </div>
+          <div class="rich-cat-info">
+            <h4>雑貨</h4>
+            <p>暮らしを彩るアイテム</p>
+          </div>
+          <span class="rich-cat-count" id="count-goods">4</span>
+        </div>
+        <div class="rich-cat-card" data-category="experience" onclick="app.selectCategory('experience')">
+          <div class="rich-cat-icon-wrap rci-experience">
+            <span>&#10024;</span>
+          </div>
+          <div class="rich-cat-info">
+            <h4>体験</h4>
+            <p>思い出に残る体験を</p>
+          </div>
+          <span class="rich-cat-count" id="count-experience">4</span>
+        </div>
+        <div class="rich-cat-card" data-category="fashion" onclick="app.selectCategory('fashion')">
+          <div class="rich-cat-icon-wrap rci-fashion">
+            <span>&#128091;</span>
+          </div>
+          <div class="rich-cat-info">
+            <h4>ファッション</h4>
+            <p>おしゃれを贈る</p>
+          </div>
+          <span class="rich-cat-count" id="count-fashion">4</span>
+        </div>
+      </div>
+
+      <!-- カテゴリフィルター（ピル型） -->
+      <div class="category-filter" id="category-filter" style="display:none;">
         <button class="category-btn active" data-category="all">すべて</button>
-        <button class="category-btn" data-category="sweets">スイーツ</button>
-        <button class="category-btn" data-category="drink">ドリンク</button>
-        <button class="category-btn" data-category="goods">雑貨</button>
-        <button class="category-btn" data-category="experience">体験</button>
-        <button class="category-btn" data-category="fashion">ファッション</button>
+        <button class="category-btn" data-category="sweets">&#127851; スイーツ</button>
+        <button class="category-btn" data-category="drink">&#9749; ドリンク</button>
+        <button class="category-btn" data-category="goods">&#128367;&#65039; 雑貨</button>
+        <button class="category-btn" data-category="experience">&#10024; 体験</button>
+        <button class="category-btn" data-category="fashion">&#128091; ファッション</button>
       </div>
 
       <!-- ギフト一覧 -->
-      <div class="gift-grid" id="gift-grid">
+      <div class="gift-grid" id="gift-grid" style="display:none;">
         <!-- JSで動的に生成 -->
+      </div>
+
+      <!-- 戻るボタン -->
+      <div class="back-to-categories" id="back-to-categories" style="display:none;">
+        <button class="btn btn-secondary" onclick="app.showCategoryList()">
+          &#8592; カテゴリ一覧に戻る
+        </button>
       </div>
     </section>
 
@@ -68,6 +343,24 @@
       </div>
     </div>
 
+    <!-- 動画モーダル -->
+    <div class="modal-overlay" id="video-modal-overlay">
+      <div class="video-modal" id="video-modal">
+        <button class="modal-close" onclick="app.closeVideoModal()">&times;</button>
+        <div class="video-modal-body">
+          <div class="video-player" id="video-player">
+            <div class="video-placeholder">
+              <div class="video-placeholder-icon">&#127916;</div>
+              <p>動画を再生中...</p>
+              <div class="video-progress-bar">
+                <div class="video-progress-fill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- カートページ -->
     <section id="page-cart" class="page">
       <h2>カート</h2>
@@ -78,14 +371,15 @@
         </div>
 
         <div class="cart-empty" id="cart-empty">
+          <div class="empty-icon">&#128722;</div>
           <p>カートは空です</p>
-          <button class="btn btn-secondary" onclick="app.showPage('catalog')">ギフトを探す</button>
+          <button class="btn btn-primary" onclick="app.showPage('catalog')">ギフトを探す</button>
         </div>
 
         <div class="cart-summary" id="cart-summary">
           <div class="cart-total">
             <span>合計</span>
-            <span id="cart-total-price">¥0</span>
+            <span id="cart-total-price">&yen;0</span>
           </div>
 
           <!-- 送り先フォーム -->
@@ -100,7 +394,7 @@
               <textarea id="gift-message" rows="4" placeholder="心を込めたメッセージを添えましょう..."></textarea>
             </div>
             <button class="btn btn-primary btn-lg btn-full" onclick="app.sendGift()">
-              ギフトを送る
+              &#127873; ギフトを送る
             </button>
           </div>
         </div>
@@ -132,8 +426,9 @@
       </div>
 
       <div class="history-empty" id="history-empty">
+        <div class="empty-icon">&#128230;</div>
         <p>まだギフトを送っていません</p>
-        <button class="btn btn-secondary" onclick="app.showPage('catalog')">ギフトを探す</button>
+        <button class="btn btn-primary" onclick="app.showPage('catalog')">ギフトを探す</button>
       </div>
     </section>
 
@@ -141,7 +436,16 @@
 
   <!-- フッター -->
   <footer class="footer">
-    <p>&copy; 2026 GiftBox - 大切な人にギフトを届けよう</p>
+    <div class="footer-inner">
+      <div class="footer-logo">&#127873; GiftBox</div>
+      <div class="footer-links">
+        <a href="#" onclick="app.showPage('catalog'); return false;">ホーム</a>
+        <a href="#" onclick="app.showPage('categories'); return false;">カテゴリ</a>
+        <a href="#" onclick="app.showPage('cart'); return false;">カート</a>
+        <a href="#" onclick="app.showPage('history'); return false;">履歴</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 GiftBox - 大切な人にギフトを届けよう</p>
+    </div>
   </footer>
 
   <script src="js/data.js"></script>
